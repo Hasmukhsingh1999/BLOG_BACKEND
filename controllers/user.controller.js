@@ -2,13 +2,8 @@ import bcrypt from "bcrypt";
 import User from "../Schema/User.js";
 import { formatDatatoSend, generateUsername } from "../utils/assets.js";
 
-
-
-
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
-
-
 
 export const createUser = async (req, res, next) => {
   try {
@@ -67,23 +62,23 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-
-
-export const signIn = async(req,res,next)=>{
+export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    
-   
-    const user = await User.findOne({ "personalInfo.email": email });
-    if(!user){
-      return res.status(403).json({"error":"User not Found!"})
-    }
-  
-    return res.status(200).json({ message: 'Sign in successful', user });
 
+    User.findOne({ "personalInfo.email": email })
+      .then((user) => {
+        console.log(user);
+        return res.json({ status: "got user document" });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(403).json({ error: "Email not found" });
+      });
+
+   
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-  
-}
+};
