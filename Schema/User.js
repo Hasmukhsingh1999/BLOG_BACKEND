@@ -67,12 +67,15 @@ const userSchema = new mongoose.Schema(
       },
       profileImg: {
         type: String,
-        default: () =>
-          `https://api.dicebar.com/6.x${
-            profileImgCollections[Math.random() * profileImgCollections.length]
+        default: () => {
+          return `https://api.dicebear.com/6.x/${
+            profileImgCollections[
+              Math.floor(Math.random() * profileImgCollections.length)
+            ]
           }/svg?seed=${
             profileImgNames[Math.floor(Math.random() * profileImgNames.length)]
-          }`,
+          }`;
+        },
       },
     },
     social_links: {
