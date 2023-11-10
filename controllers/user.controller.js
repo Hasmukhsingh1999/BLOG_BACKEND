@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import User from "../Schema/User.js";
 import { formatDatatoSend, generateUsername } from "../utils/assets.js";
 
@@ -62,23 +62,30 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-export const signIn = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    User.findOne({ "personalInfo.email": email })
-      .then((user) => {
-        console.log(user);
-        return res.json({ status: "got user document" });
-      })
-      .catch((err) => {
-        console.log(err);
+export const signIn = (req, res, next) => {
+  let { email, password } = req.body;
+  User.findOne({ "personalInfo.email": email }).select("+personalInfo.password")
+    .then((user) => {
+      if (!user) {
         return res.status(403).json({ error: "Email not found" });
-      });
+      }
 
-   
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
+      bcrypt.compare(password, user.personalInfo.password, (err, result) => {
+        if (err) {
+          console.error("Error during password comparison:", err);
+          return res.status(403).json({ error: "Error occurred while logging in, please try again" });
+        }
+        if (!result) {
+          return res.status(403).json({ error: "Incorrect password" });
+        } else {
+          return res.status(200).json(formatDatatoSend(user));
+        }
+      });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return res
+        .status(500)
+        .json({ error: "Error occurred while logging in, please try again" });
+    });
 };
