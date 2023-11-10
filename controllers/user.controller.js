@@ -1,28 +1,14 @@
 import bcrypt from "bcrypt";
 import User from "../Schema/User.js";
+import { formatDatatoSend, generateUsername } from "../utils/assets.js";
 
-import { nanoid } from "nanoid";
+
+
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 
-const formatDatatoSend = (user) => {
-  return {
-    profileImg: user.personalInfo.profileImg,
-    username: user.personalInfo.username,
-    fullname: user.personalInfo.fullname,
-  };
-};
 
-const generateUsername = async (email) => {
-  let username = email.split("@")[0];
-  let isUsernameNotUnique = await User.exists({
-    "personalInfo.username": username,
-  }).then((result) => result);
-  isUsernameNotUnique ? (username += nanoid().substring(0, 5)) : "";
-
-  return username;
-};
 
 export const createUser = async (req, res, next) => {
   try {
@@ -80,3 +66,24 @@ export const createUser = async (req, res, next) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+export const signIn = async(req,res,next)=>{
+  try {
+    const { email, password } = req.body;
+    
+   
+    const user = await User.findOne({ "personalInfo.email": email });
+    if(!user){
+      return res.status(403).json({"error":"User not Found!"})
+    }
+  
+    return res.status(200).json({ message: 'Sign in successful', user });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+  
+}
