@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URL, {
 
 // Importing user routes from user.routes.js
 import userRouter from "./routes/user.routes.js";
-app.use("/api/user", userRouter);
+app.use("/", userRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on PORT -> ${PORT}`);
