@@ -64,7 +64,8 @@ export const createUser = async (req, res, next) => {
 
 export const signIn = (req, res, next) => {
   let { email, password } = req.body;
-  User.findOne({ "personalInfo.email": email }).select("+personalInfo.password")
+  User.findOne({ "personalInfo.email": email })
+    .select("+personalInfo.password")
     .then((user) => {
       if (!user) {
         return res.status(403).json({ error: "Email not found" });
@@ -73,7 +74,11 @@ export const signIn = (req, res, next) => {
       bcrypt.compare(password, user.personalInfo.password, (err, result) => {
         if (err) {
           console.error("Error during password comparison:", err);
-          return res.status(403).json({ error: "Error occurred while logging in, please try again" });
+          return res
+            .status(403)
+            .json({
+              error: "Error occurred while logging in, please try again",
+            });
         }
         if (!result) {
           return res.status(403).json({ error: "Incorrect password" });
@@ -89,4 +94,3 @@ export const signIn = (req, res, next) => {
         .json({ error: "Error occurred while logging in, please try again" });
     });
 };
-
