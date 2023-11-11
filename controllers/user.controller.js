@@ -1,8 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../Schema/User.js";
 import { formatDatatoSend, generateUsername } from "../utils/assets.js";
-import admin from 'firebase-admin'
-import serviceAccountKey from '../react-js-blog-website-f2d81-firebase-adminsdk-buh39-364a00ca85.json'
+
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 
