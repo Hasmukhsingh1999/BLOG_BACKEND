@@ -94,3 +94,8 @@ export const signIn = (req, res, next) => {
         .json({ error: "Error occurred while logging in, please try again" });
     });
 };
+
+
+export const createBlog = (req,res,next)=>{
+  res.json({message:'h1'})
+}

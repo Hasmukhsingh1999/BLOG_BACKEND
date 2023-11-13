@@ -82,10 +82,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 // });
 
 
-app.post("/createBlog",(req,res)=>{
-  // return  res.json(req.body)
-  console.log(req.body)
-})
+
 
 // Importing user routes from user.routes.js
 import userRouter from "./routes/user.routes.js";
