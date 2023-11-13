@@ -1,7 +1,6 @@
-POST http://localhost:3000/signin
+POST http://localhost:3000/createBlog
 Content-Type: application/json
 
 {
-    "email":"vanity@gmail.com",
-    "password":"Vanity123"
+    "blog-name":"hi"
 }
