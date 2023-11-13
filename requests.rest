@@ -1,6 +1,21 @@
-POST http://localhost:3000/createBlog
+
+#AccessTOKEN - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NTFlNzgxMzExNGVkZDQ1OWQ2Y2UxYiIsImlhdCI6MTY5OTg2NjQ5N30.gWm132Li7Q70GxqCqIo-pcjRRyTL_ZBNAAz2XOjX4X0
+
+
+# POST http://localhost:3000/signup
+# Content-Type: application/json
+
+# {
+#     "fullname":"marlin",
+#     "email":"marlin@gmail.com",
+#     "password":"Marlin@123"
+# }
+
+
+POST http://localhost:3000/create-blog
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NTFlNzgxMzExNGVkZDQ1OWQ2Y2UxYiIsImlhdCI6MTY5OTg2NjQ5N30.gWm132Li7Q70GxqCqIo-pcjRRyTL_ZBNAAz2XOjX4X0
 
 {
-    "blog-name":"hi"
+"title":"test title"
 }

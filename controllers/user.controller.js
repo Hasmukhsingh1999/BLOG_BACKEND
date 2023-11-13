@@ -74,11 +74,9 @@ export const signIn = (req, res, next) => {
       bcrypt.compare(password, user.personalInfo.password, (err, result) => {
         if (err) {
           console.error("Error during password comparison:", err);
-          return res
-            .status(403)
-            .json({
-              error: "Error occurred while logging in, please try again",
-            });
+          return res.status(403).json({
+            error: "Error occurred while logging in, please try again",
+          });
         }
         if (!result) {
           return res.status(403).json({ error: "Incorrect password" });
@@ -95,7 +93,10 @@ export const signIn = (req, res, next) => {
     });
 };
 
-
-export const createBlog = (req,res,next)=>{
-  res.json({message:'h1'})
-}
+export const createBlog = (req, res, next) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+};

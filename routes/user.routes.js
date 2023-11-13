@@ -1,5 +1,6 @@
 import express from "express";
 import { createBlog, createUser, signIn} from "../controllers/user.controller.js";
+import { verifyJWT } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.post("/signin",signIn)
 
 
 //CREATE BLOG -> 
-router.post('/create-blog',createBlog)
+router.post('/create-blog',verifyJWT,createBlog)
 
 
 
