@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../Schema/User.js";
 import { formatDatatoSend, generateUsername } from "../utils/assets.js";
+import { nanoid } from "nanoid";
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -95,8 +96,53 @@ export const signIn = (req, res, next) => {
 
 export const createBlog = (req, res, next) => {
   try {
-    
+    let authorId = req.user;
+    let { title, banner, content, des, tags, draft } = req.body;
+
+    if (!title.length) {
+      return res
+        .status(405)
+        .json({ error: "You must provide a title to publish the blog" });
+    }
+    if (!des.length || des.length > 200) {
+      return res.status(403).json({
+        error: "You must provide blog description under 200 characters.",
+      });
+    }
+
+    if (!banner.length) {
+      return res
+        .status(403)
+        .json({ error: "You must provide a blog banner to publish it" });
+    }
+    if (!content.blocks.length) {
+      return res
+        .status(403)
+        .json({ error: "There must be some blog content to publish it." });
+    }
+
+    if (!tags.length || tags.length > 10) {
+      return res.status(403).json({
+        error: "Provide tags in order to publish the blog, Maximum 10",
+      });
+    }
+
+    tags = tags.map((tag) => tag.toLowerCase());
+
+    // Fix string replacement
+    let blogId =
+      title
+        .replace(/[^a-zA-Z0-9]/g, " ")
+        .replace(/\s+/g, "-")
+        .trim() + nanoid();
+
+
+
+        let blog = 
+    console.log(blogId);
+    return res.json({ message: "OK" });
   } catch (error) {
-    
+    // Handle errors here ->
+    console.log(error);
   }
 };
