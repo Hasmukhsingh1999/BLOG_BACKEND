@@ -96,78 +96,80 @@ export const signIn = (req, res, next) => {
 };
 
 export const createBlog = async (req, res, next) => {
-  try {
-    let authorId = req.user;
-    let { title, banner, content, des, tags, draft } = req.body;
-    if (!title.length) {
-      return res
-        .status(405)
-        .json({ error: "You must provide a title to publish the blog" });
-    }
-    if (!draft) {
-      if (!des.length || des.length > 200) {
-        return res.status(403).json({
-          error: "You must provide a blog description under 200 characters.",
-        });
-      }
-
-      if (!banner.length) {
-        return res
-          .status(403)
-          .json({ error: "You must provide a blog banner to publish it" });
-      }
-      if (!content.blocks.length) {
-        return res
-          .status(403)
-          .json({ error: "There must be some blog content to publish it." });
-      }
-
-      if (!tags.length || tags.length > 10) {
-        return res.status(403).json({
-          error: "Provide tags in order to publish the blog, Maximum 10",
-        });
-      }
-    }
-
-    tags = tags.map((tag) => tag.toLowerCase());
-
-    // Fix string replacement
-    let blog_id =
-      title
-        .replace(/[^a-zA-Z0-9]/g, " ")
-        .replace(/\s+/g, "-")
-        .trim() + nanoid();
-
-    let blog = new Blog({
-      title,
-      des,
-      banner,
-      content,
-      tags,
-      author: authorId,
-      blog_id,
-      draft: Boolean(draft),
-    });
-
-    let incrementVal = draft ? 0 : 1;
-
-    const user = await User.findByIdAndUpdate(
-      { _id: authorId },
-      {
-        $inc: { "account_info.total_post": incrementVal },
-        $push: { blogs: blog._id },
-      }
-    );
-
-    await blog.save();
-    if (user) {
-      return res.status(200).json({ id: blog.blog_id });
-    } else {
-      return res
-        .status(500)
-        .json({ error: "Failed to update total posts number" });
-    }
-  } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+  let authorId = req.user;
+  let { title, banner, content, des, tags, draft } = req.body;
+  if (!title.length) {
+    return res
+      .status(405)
+      .json({ error: "You must provide a title to publish the blog" });
   }
+  if (!draft) {
+    if (!des.length || des.length > 200) {
+      return res.status(403).json({
+        error: "You must provide a blog description under 200 characters.",
+      });
+    }
+
+    if (!banner.length) {
+      return res
+        .status(403)
+        .json({ error: "You must provide a blog banner to publish it" });
+    }
+    if (!content.blocks.length) {
+      return res
+        .status(403)
+        .json({ error: "There must be some blog content to publish it." });
+    }
+
+    if (!tags.length || tags.length > 10) {
+      return res.status(403).json({
+        error: "Provide tags in order to publish the blog, Maximum 10",
+      });
+    }
+  }
+
+  tags = tags.map((tag) => tag.toLowerCase());
+
+  // Fix string replacement
+  let blog_id =
+    title
+      .replace(/[^a-zA-Z0-9]/g, " ")
+      .replace(/\s+/g, "-")
+      .trim() + nanoid();
+
+  let blog = new Blog({
+    title,
+    des,
+    banner,
+    content,
+    tags,
+    author: authorId,
+    blog_id,
+    draft: Boolean(draft),
+  });
+
+  blog
+    .save()
+    .then((blog) => {
+      let incrementVal = draft ? 0 : 1;
+
+      User.findByIdAndUpdate(
+        { _id: authorId },
+        {
+          $inc: { "account_info.total_posts": incrementVal },
+          $push: { blogs: blog._id },
+        }
+      )
+        .then((user) => {
+          return res.status(200).json({ id: blog.blog_id });
+        })
+        .catch((err) => {
+          return res
+            .status(500)
+            .json({ error: "Failed to update total posts number" });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
 };
