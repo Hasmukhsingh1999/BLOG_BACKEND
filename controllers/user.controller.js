@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import User from "../Schema/User.js";
 import { formatDatatoSend, generateUsername } from "../utils/assets.js";
 import { nanoid } from "nanoid";
+import Blog from "../Schema/Blog.js";
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -94,7 +95,7 @@ export const signIn = (req, res, next) => {
     });
 };
 
-export const createBlog = (req, res, next) => {
+export const createBlog = async (req, res, next) => {
   try {
     let authorId = req.user;
     let { title, banner, content, des, tags, draft } = req.body;
@@ -106,7 +107,7 @@ export const createBlog = (req, res, next) => {
     }
     if (!des.length || des.length > 200) {
       return res.status(403).json({
-        error: "You must provide blog description under 200 characters.",
+        error: "You must provide a blog description under 200 characters.",
       });
     }
 
@@ -130,19 +131,42 @@ export const createBlog = (req, res, next) => {
     tags = tags.map((tag) => tag.toLowerCase());
 
     // Fix string replacement
-    let blogId =
+    let blog_id =
       title
         .replace(/[^a-zA-Z0-9]/g, " ")
         .replace(/\s+/g, "-")
         .trim() + nanoid();
 
+    let blog = new Blog({
+      title,
+      des,
+      banner,
+      content,
+      tags,
+      author: authorId,
+      blog_id,
+      draft: Boolean(draft),
+    });
 
+    let incrementVal = draft ? 0 : 1;
 
-        let blog = 
-    console.log(blogId);
-    return res.json({ message: "OK" });
+    const user = await User.findByIdAndUpdate(
+      { _id: authorId },
+      {
+        $inc: { "account_info.total_post": incrementVal },
+        $push: { blogs: blog._id },
+      }
+    );
+
+    await blog.save();
+    if (user) {
+      return res.status(200).json({ id: blog.blog_id });
+    } else {
+      return res
+        .status(500)
+        .json({ error: "Failed to update total posts number" });
+    }
   } catch (error) {
-    // Handle errors here ->
-    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

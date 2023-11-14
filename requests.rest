@@ -2,19 +2,18 @@
 #AccessTOKEN - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NTFlNzgxMzExNGVkZDQ1OWQ2Y2UxYiIsImlhdCI6MTY5OTg2NjQ5N30.gWm132Li7Q70GxqCqIo-pcjRRyTL_ZBNAAz2XOjX4X0
 
 
-# POST http://localhost:3000/signup
+# POST http://localhost:3000/signin
 # Content-Type: application/json
 
 # {
-#     "fullname":"marlin12",
-#     "email":"marlin12@gmail.com",
-#     "password":"Marlin@123"
+#     "email":"emma@gmail.com",
+#     "password":"Emma@123"
 # }
 
 
 POST http://localhost:3000/create-blog
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NTJmZmZiNjU1MDUxNDY5NWU2Njg0ZiIsImlhdCI6MTY5OTkzODI5OX0._-V-pJG5TK-Amd3L4LmQGbPhYUIDBasXyWhymtiG1m4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NGY2ODJlMGRiYjIwN2E3NDcyZGU5OSIsImlhdCI6MTY5OTk0MjkwOX0.VGI3wXQnMv_LKQirCILVGRh6_4CD-n-prETLrAjeQ8g
 
 {
     "title":"eko @ 3456 89 ",
